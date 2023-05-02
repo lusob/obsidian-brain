@@ -198,7 +198,7 @@ export default class MyPlugin extends Plugin {
 		// Use Docker-CLI-JS to run the container
 		try {
 			await docker.command(`rm brain || true`)
-			await docker.command(`run -d --name brain -p 9000:9000 -v ${vaultPath}:${vaultPath} -e MARKDOWN_FILES=${vaultPath} -e OPENAI_API_KEY=${openaiApiKey} -t brain`);
+			await docker.command(`run -d --name brain -p 9000:9000 -v ${vaultPath}:${vaultPath} -e MARKDOWN_FILES=${vaultPath} -e OPENAI_API_KEY=${openaiApiKey} -t lusob04/brain`);
 		} catch (err) {
 			console.log('Failed to start brAIn: ' + err.message);
 		}
@@ -219,7 +219,7 @@ export default class MyPlugin extends Plugin {
 		try {
 			await docker.command(`stop brain || true`)
 			await docker.command(`rm brain || true`)
-			await docker.command(`run --rm --name brain -v ${vaultPath}:${vaultPath} -e MARKDOWN_FILES=${vaultPath} -e OPENAI_API_KEY=${openaiApiKey} -t brain make ingest`);
+			await docker.command(`run --rm --name brain -v ${vaultPath}:${vaultPath} -e MARKDOWN_FILES=${vaultPath} -e OPENAI_API_KEY=${openaiApiKey} -t lusob04/brain make ingest`);
 		} catch (err) {
 			console.log('Failed ingesting: ' + err.message);
 		}
