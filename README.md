@@ -17,7 +17,7 @@ This plugin enables a ChatGPT powered chatbot specifically focused on question a
 
 ### 🛠 How it works
 
-The plugin uses a Docker container running the brAIn server to enable the chatbot functionality. The brAIn server reads in your Obsidian vault documents and uses the OpenAI GPT-3 API to enable the question answering functionality. Once the server is running, you can chat with the bot through the plugin's interface.
+The plugin uses a [brAIn docker container](https://hub.docker.com/repository/docker/lusob04/brain) running the [brAIn](https://github.com/lusob/brAIn) server to enable the chatbot functionality. The brAIn server reads in your Obsidian vault documents and uses the OpenAI GPT-3 API to enable the question answering functionality. Once the server is running, you can chat with the bot through the plugin's interface.
 
 ### 💬 Support
 
@@ -26,6 +26,10 @@ If you have any issues or feature requests, please open an issue on [GitHub](htt
 ### 📓 License
 
 This plugin is licensed under the [MIT License](https://github.com/lusob/obsidian-brain/blob/main/LICENSE).
+
+### © Privacy
+
+The OpenAI API is used by brAIn to generate the vector store during ingestion and to answer each question asked in the chat, but its [API usage policies](https://openai.com/policies/api-data-usage-policies ) guarantee to us that OpenAI will not use data submitted by customers via its API to train or improve their models and any data submitted via API will be deleted after 30 days.
 
 ### ⚠️ Limitations
 
