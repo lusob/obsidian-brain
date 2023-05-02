@@ -1,0 +1,11 @@
+{
+	"id": "obsidian-brain",
+	"name": "brAIn",
+	"version": "1.0.1",
+	"minAppVersion": "0.15.0",
+	"description": "This is a brAIn for Obsidian. This plugin implements a ChatGPT retrieval for your obsidian notes.",
+	"author": "Luis Sobrecueva",
+	"authorUrl": "https://github.com/lusob/obsidian-brain",
+	"fundingUrl": "https://bmc.link/lusob",
+	"isDesktopOnly": false
+}
