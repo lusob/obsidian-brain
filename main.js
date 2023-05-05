@@ -6268,7 +6268,7 @@ var require_dist3 = __commonJS({
 // main.ts
 var main_exports = {};
 __export(main_exports, {
-  default: () => MyPlugin
+  default: () => Brain
 });
 module.exports = __toCommonJS(main_exports);
 var import_child_process = require("child_process");
@@ -6277,7 +6277,7 @@ var import_obsidian = require("obsidian");
 var DEFAULT_SETTINGS = {
   openaiApiKey: ""
 };
-var MyPlugin = class extends import_obsidian.Plugin {
+var Brain = class extends import_obsidian.Plugin {
   async openBrain() {
     const modal = new import_obsidian.Modal(this.app);
     modal.titleEl.setText("brAIn");
@@ -6297,10 +6297,10 @@ var MyPlugin = class extends import_obsidian.Plugin {
     const interval = 2e3;
     while (timeout > 0 && !isAvailable) {
       try {
-        const response = await fetch("http://localhost:9000", {
-          mode: "no-cors"
+        const response = await (0, import_obsidian.requestUrl)({
+          url: "http://localhost:9000"
         });
-        isAvailable = response.status == 0;
+        isAvailable = response.status == 200;
         if (!isAvailable) {
           await new Promise((resolve) => setTimeout(resolve, interval));
         }
@@ -6365,9 +6365,6 @@ var MyPlugin = class extends import_obsidian.Plugin {
       callback: () => this.ingestDocs()
     });
     this.addSettingTab(new BrainSettingTab(this.app, this));
-    this.registerDomEvent(document, "click", (evt) => {
-      console.log("click", evt);
-    });
     this.registerInterval(window.setInterval(() => console.log("setInterval"), 5 * 60 * 1e3));
     try {
       (0, import_child_process.execSync)("docker --version");

@@ -1,18 +1,16 @@
 import { execSync } from 'child_process';
 import { Docker, Options } from 'docker-cli-js';
-import { App, Modal, Notice, Plugin, PluginSettingTab, Setting, addIcon } from 'obsidian';
-// Remember to rename these classes and interfaces!
-
-interface MyPluginSettings {
+import { App, Modal, Notice, Plugin, PluginSettingTab, Setting, addIcon, requestUrl } from 'obsidian';
+interface BrainSettings {
 	openaiApiKey: string;
 }
 
-const DEFAULT_SETTINGS: MyPluginSettings = {
+const DEFAULT_SETTINGS: BrainSettings = {
 	openaiApiKey: ''
 };
 
-export default class MyPlugin extends Plugin {
-	settings: MyPluginSettings;
+export default class Brain extends Plugin {
+	settings: BrainSettings;
 	loadingModal: Modal;
 
 	async openBrain() {
@@ -47,10 +45,10 @@ export default class MyPlugin extends Plugin {
 		const interval = 2000; // Check every 2sec
 		while (timeout > 0 && !isAvailable) {
 			try {
-				const response = await fetch('http://localhost:9000', {
-					mode: 'no-cors'
+				const response = await requestUrl({
+					url: 'http://localhost:9000'
 				});
-				isAvailable = response.status == 0;
+				isAvailable = response.status == 200;
 				if (!isAvailable) {
 					await new Promise(resolve => setTimeout(resolve, interval));
 				}
@@ -148,12 +146,6 @@ export default class MyPlugin extends Plugin {
 		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new BrainSettingTab(this.app, this));
 
-		// If the plugin hooks up any global DOM events (on parts of the app that doesn't belong to this plugin)
-		// Using this function will automatically remove the event listener when this plugin is disabled.
-		this.registerDomEvent(document, 'click', (evt: MouseEvent) => {
-			console.log('click', evt);
-		});
-
 		// When registering intervals, this function will automatically clear the interval when the plugin is disabled.
 		this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
 
@@ -227,9 +219,9 @@ export default class MyPlugin extends Plugin {
 }
 
 class BrainSettingTab extends PluginSettingTab {
-	plugin: MyPlugin;
+	plugin: Brain;
 
-	constructor(app: App, plugin: MyPlugin) {
+	constructor(app: App, plugin: Brain) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}
