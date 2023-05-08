@@ -2,6 +2,10 @@
 
 This plugin enables a ChatGPT powered chatbot specifically focused on question answering over your Obsidian vault notes(markdown files).
 
+
+https://user-images.githubusercontent.com/480507/236815106-2c38d137-9345-498e-8531-46494239d19a.mp4
+
+
 ### 🧰 Requirements
 
 - [Docker](https://docs.docker.com/get-docker/)
