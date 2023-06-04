@@ -6397,7 +6397,7 @@ var Brain = class extends import_obsidian.Plugin {
     const vaultPath = this.app.vault.adapter.basePath;
     try {
       await docker.command(`rm brain || true`);
-      await docker.command(`run -d --name brain -p 9000:9000 -v ${vaultPath}:${vaultPath} -e MARKDOWN_FILES=${vaultPath} -e OPENAI_API_KEY=${openaiApiKey} -t lusob04/brain`);
+      await docker.command(`run -d --name brain -p 9000:9000 -v ${vaultPath}:${vaultPath} -e MARKDOWN_FILES=${vaultPath} -e OPENAI_API_KEY=${openaiApiKey} -e IS_OBSIDIAN_VAULT=1 -t lusob04/brain`);
     } catch (err) {
       console.log("Failed to start brAIn: " + err.message);
     }
@@ -6430,7 +6430,6 @@ var BrainSettingTab = class extends import_obsidian.PluginSettingTab {
   display() {
     const { containerEl } = this;
     containerEl.empty();
-    containerEl.createEl("h2", { text: "brAIn Settings." });
     new import_obsidian.Setting(containerEl).setName("OpenAI api key").setDesc("Set here your own OpenAI api key").addText((text) => text.setPlaceholder("").setValue(this.plugin.settings.openaiApiKey).onChange(async (value) => {
       this.plugin.settings.openaiApiKey = value;
       await this.plugin.saveSettings();

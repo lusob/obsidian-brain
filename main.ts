@@ -190,7 +190,7 @@ export default class Brain extends Plugin {
 		// Use Docker-CLI-JS to run the container
 		try {
 			await docker.command(`rm brain || true`)
-			await docker.command(`run -d --name brain -p 9000:9000 -v ${vaultPath}:${vaultPath} -e MARKDOWN_FILES=${vaultPath} -e OPENAI_API_KEY=${openaiApiKey} -t lusob04/brain`);
+			await docker.command(`run -d --name brain -p 9000:9000 -v ${vaultPath}:${vaultPath} -e MARKDOWN_FILES=${vaultPath} -e OPENAI_API_KEY=${openaiApiKey} -e IS_OBSIDIAN_VAULT=1 -t lusob04/brain`);
 		} catch (err) {
 			console.log('Failed to start brAIn: ' + err.message);
 		}
@@ -230,8 +230,6 @@ class BrainSettingTab extends PluginSettingTab {
 		const { containerEl } = this;
 
 		containerEl.empty();
-
-		containerEl.createEl('h2', { text: 'brAIn Settings.' });
 
 		new Setting(containerEl)
 			.setName('OpenAI api key')
