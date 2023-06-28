@@ -1,7 +1,7 @@
 {
 	"id": "brain",
 	"name": "brAIn",
-	"version": "1.0.1",
+	"version": "1.0.3",
 	"minAppVersion": "0.15.0",
 	"description": "This is a brAIn for Obsidian. This plugin implements a ChatGPT retrieval for your obsidian notes.",
 	"author": "Luis Sobrecueva",

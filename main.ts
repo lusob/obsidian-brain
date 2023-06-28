@@ -3,10 +3,12 @@ import { Docker, Options } from 'docker-cli-js';
 import { App, Modal, Notice, Plugin, PluginSettingTab, Setting, addIcon, requestUrl } from 'obsidian';
 interface BrainSettings {
 	openaiApiKey: string;
+	useOpenAIEmbeddings: boolean; // Add this line
 }
 
 const DEFAULT_SETTINGS: BrainSettings = {
-	openaiApiKey: ''
+	openaiApiKey: '',
+	useOpenAIEmbeddings: false // Add this line
 };
 
 export default class Brain extends Plugin {
@@ -79,7 +81,7 @@ export default class Brain extends Plugin {
 			modal.open();
 		} else {
 			// Show an error message if the brAIn web interface is not available
-			new Notice('brAIn is not running, please check that the port 9000 is not being used by other service');
+			new Notice('brAIn is not running, check that you have run the ingest command first and also that no other services are using port 9000');
 		}
 		this.loadingModal.close();
 
@@ -151,10 +153,10 @@ export default class Brain extends Plugin {
 
 		try {
 			// Check if Docker is installed by running "docker --version" command
-			execSync('docker --version');
+			execSync('docker --version', { stdio: 'pipe', env: { PATH: '/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin' }});
 		} catch (error) {
 			// Docker is not installed, show a dialog
-			console.error('Docker is not installed in the system.');
+			console.error('Docker is not installed in the system. Error: ' + error);
 			// You can use a dialog library or show an alert using the browser's window object
 			new Notice('Docker is not installed in the system, brAIn plugin need docker to run.');
 		}
@@ -181,19 +183,25 @@ export default class Brain extends Plugin {
 		/* machineName */ undefined,
 		/* currentWorkingDirectory */ undefined,
 		/* echo*/ true,
-
+		{PATH: '/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin'}
 		);
 
 		const docker = new Docker(options);
 		const vaultPath = (this.app.vault.adapter as any).basePath
-
-		// Use Docker-CLI-JS to run the container
+		console.log("Running brain container...")
 		try {
-			await docker.command(`rm brain || true`)
-			await docker.command(`run -d --name brain -p 9000:9000 -v ${vaultPath}:${vaultPath} -e MARKDOWN_FILES=${vaultPath} -e OPENAI_API_KEY=${openaiApiKey} -e IS_OBSIDIAN_VAULT=1 -t lusob04/brain`);
+			await docker.command(`rm brain`)
 		} catch (err) {
+			console.log('Failed removing container: ' + err.message);
+		}
+		try {
+			let output = await docker.command(`run -d --name brain -p 9000:9000 -v ${vaultPath}:${vaultPath} -e MARKDOWN_FILES=${vaultPath} -e OPENAI_API_KEY=${openaiApiKey} -e IS_OBSIDIAN_VAULT=1 -t lusob04/brain`);
+			console.log('Run brain output: ' + JSON.stringify(output))
+		} catch (err) {
+			// Handle error during creation process
 			console.log('Failed to start brAIn: ' + err.message);
 		}
+
 	}
 
 	async runIngestDocs(openaiApiKey: string) {
@@ -202,16 +210,27 @@ export default class Brain extends Plugin {
 		/* machineName */ undefined,
 		/* currentWorkingDirectory */ undefined,
 		/* echo*/ true,
+		{PATH: '/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin'}
 		);
 
 		const docker = new Docker(options);
 		const vaultPath = (this.app.vault.adapter as any).basePath
 
-		// Use Docker-CLI-JS to run the container
 		try {
-			await docker.command(`stop brain || true`)
-			await docker.command(`rm brain || true`)
-			await docker.command(`run --rm --name brain -v ${vaultPath}:${vaultPath} -e MARKDOWN_FILES=${vaultPath} -e OPENAI_API_KEY=${openaiApiKey} -t lusob04/brain make ingest`);
+			await docker.command(`stop brain`)
+		} catch (err) {
+			console.log('Failed stopping container: ' + err.message);
+		}
+		try {
+			await docker.command(`rm brain`)
+		} catch (err) {
+			console.log('Failed removing container: ' + err.message);
+		}
+		try {
+			console.log('Ingesting docs...')
+			let command = this.settings.useOpenAIEmbeddings ? 'make ingest-openai' : 'make ingest';
+			let output = await docker.command(`run --rm --name brain -v ${vaultPath}:${vaultPath} -e MARKDOWN_FILES=${vaultPath} -e OPENAI_API_KEY=${openaiApiKey} -t lusob04/brain ${command}`);
+			console.log('Ingest output: ' + JSON.stringify(output))
 		} catch (err) {
 			console.log('Failed ingesting: ' + err.message);
 		}
@@ -240,6 +259,17 @@ class BrainSettingTab extends PluginSettingTab {
 					.setValue(this.plugin.settings.openaiApiKey)
 					.onChange(async (value) => {
 						this.plugin.settings.openaiApiKey = value;
+						await this.plugin.saveSettings();
+					}));
+
+		new Setting(containerEl)
+			.setName('Use OpenAI Embeddings')
+			.setDesc('Check this if you want to use OpenAI embeddings')
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.useOpenAIEmbeddings)
+					.onChange(async (value) => {
+						this.plugin.settings.useOpenAIEmbeddings = value;
 						await this.plugin.saveSettings();
 					}));
 	}
