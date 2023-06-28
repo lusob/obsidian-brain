@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-brain",
-	"version": "3",
+	"version": "1.0.3",
 	"description": "This is a brAIn for Obsidian (https://obsidian.md)",
 	"main": "main.js",
 	"scripts": {
