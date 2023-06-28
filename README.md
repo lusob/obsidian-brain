@@ -33,12 +33,17 @@ This plugin is licensed under the [MIT License](https://github.com/lusob/obsidia
 
 ### © Privacy
 
-The OpenAI API is used by brAIn to generate the vector store during ingestion and to answer each question asked in the chat, but its [API usage policies](https://openai.com/policies/api-data-usage-policies ) guarantee to us that OpenAI will not use data submitted by customers via its API to train or improve their models and any data submitted via API will be deleted after 30 days.
+By defauls the embeddings as generated locally so your docs are not leaving your machine, in case you check the OpenAI Embeddings check in settings, The OpenAI API is used by brAIn to generate the vector store during ingestion and to answer each question asked in the chat, but its [API usage policies](https://openai.com/policies/api-data-usage-policies ) guarantee to us that OpenAI will not use data submitted by customers via its API to train or improve their models and any data submitted via API will be deleted after 30 days.
 
 ### ⚠️ Limitations
 
-During the ingestion (embedding generation) a big amount of notes in your vault can lead to high expenses (~ 1000 notes = 1$), monitor your account and set API key limits to avoid scares
+If you are generating the embeddings locally it could consume a lot of time and hardware resources (depending of your marchines and the number of documents)
+In case you want to generate the embeddings in OpenAI during the ingestion (embedding generation) a big amount of notes in your vault can lead to high expenses (~ 1000 notes = 1$), monitor your account and set API key limits to avoid scares
 
 ### 🐞 Known Issues
 
 brAIn may occasionally generate incorrect or irrelevant content based on the user's input. Additionally, it may encounter errors when calling the OpenAI API if the API key is invalid or if there are issues with the OpenAI API service.
+
+### ⏭ Next
+
+The final idea is to create a complete offline chatbot using an LLM, but so far the hardware requirements for these models are too high.
